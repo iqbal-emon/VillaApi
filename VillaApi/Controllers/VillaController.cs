@@ -82,7 +82,7 @@ namespace VillaApi.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public ActionResult<VillaResponseDto> UpdateVilla(int id, VillaRequestDto villaDto)
+        public IActionResult UpdateVilla(int id, VillaRequestDto villaDto)
         {
             if (villaDto == null || id <= 0)
             {

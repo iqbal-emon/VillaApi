@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using System.Threading.RateLimiting;
 using VillaApi.Data;
 using VillaApi.Model;
 using VillaApi.Repositories.IRepositories;
@@ -62,6 +64,17 @@ builder.Services.AddAuthentication(options =>
     };
 
 });
+builder.Services.AddRateLimiter(options =>
+{
+    options.AddFixedWindowLimiter("fixed", opt =>
+    {
+        opt.PermitLimit = 5; // ✅ Max 5 requests
+        opt.Window = TimeSpan.FromSeconds(10); // ✅ In 10-second window
+        opt.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
+        opt.QueueLimit = 2; // ✅ Extra requests can wait in queue
+    });
+});
+
 
 // Add DbContext with SQL Server
 builder.Services.AddDbContext<AppDbContext>(options =>
@@ -74,11 +87,13 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+app.UseRateLimiter();
 
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapControllers();
+app.MapControllers().RequireRateLimiting("fixed");
+
 
 app.Run();

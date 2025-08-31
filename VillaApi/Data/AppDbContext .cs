@@ -8,7 +8,7 @@ namespace VillaApi.Data
         public DbSet<Villa> Villas { get; set; }
         public DbSet<User> Users { get; set; }
 
-        public AppDbContext(DbContextOptions<AppDbContext> options)
+        public AppDbContext(DbContextOptions<AppDbContext>options)
             : base(options)
         {
         }
